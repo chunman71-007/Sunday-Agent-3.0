@@ -18,6 +18,11 @@ on:
         required: false
         default: 'default'
         type: string
+      background:
+        description: '背景模式 (transparent, white, black)'
+        required: false
+        default: 'transparent'
+        type: string
 
 jobs:
   generate:
@@ -36,24 +41,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt || echo "無 requirements.txt，跳過"
 
-      - name: 執行貼紙生成器（傳入 style、text、font_name）
+      - name: 執行貼紙生成器（傳入 style、text、font_name、background）
         run: |
           echo "=== Debug: inputs ==="
           echo "style     : '${{ inputs.style }}'"
           echo "text      : '${{ inputs.text }}'"
           echo "font_name : '${{ inputs.font_name }}'"
+          echo "background: '${{ inputs.background }}'"
           echo "=== 執行 Python 腳本 ==="
           python src/generate_sticker.py \
             "${{ inputs.style || 'new_year' }}" \
             "${{ inputs.text || 'Happy Meow Year' }}" \
-            "${{ inputs.font_name || 'default' }}"
+            "${{ inputs.font_name || 'default' }}" \
+            "${{ inputs.background || 'transparent' }}"
 
       - name: Commit and push generated sticker
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add assets/generated/*
-          git commit -m "Auto-generate sticker: ${{ inputs.style || 'new_year' }}_${{ inputs.font_name || 'default' }}_${{ github.run_id }}" || echo "No changes to commit"
+          git commit -m "Auto-generate sticker: ${{ inputs.style || 'new_year' }}_${{ inputs.font_name || 'default' }}_${{ inputs.background || 'transparent' }}_${{ github.run_id }}" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
