@@ -4,8 +4,8 @@ import time  # ← 新增這行
 from datetime import datetime
 
 # 你可以之後改用自己喜歡的模型
-MODEL_ID = "stabilityai/stable-diffusion-2-1"
-API_URL = f"https://router.huggingface.co/v1/models/{MODEL_ID}"  # 新端點 2026
+MODEL_ID = "runwayml/stable-diffusion-v1-5"  # ← 換這個，超穩定
+API_URL = f"https://router.huggingface.co/v1/models/{MODEL_ID}"
 
 def generate_sunday_image(
     prompt: str,
@@ -44,6 +44,9 @@ def generate_sunday_image(
         else:
             print(f"API 錯誤 {resp.status_code}: {resp.text[:200]}")
             break
+
+    print(f"Debug - Status: {resp.status_code}")
+    print(f"Debug - Response: {resp.text[:500]}")
     
     if resp is None or resp.status_code != 200:
         raise RuntimeError(f"Hugging Face API 失敗: {resp.status_code if resp else '無回應'} {resp.text[:300] if resp else ''}")
